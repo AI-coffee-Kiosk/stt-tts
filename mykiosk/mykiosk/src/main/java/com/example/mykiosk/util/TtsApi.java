@@ -8,7 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Service
-public class TextToSpeechService {
+public class TtsApi {
 
     public String synthesizeText(String text) {
         try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {
@@ -19,7 +19,7 @@ public class TextToSpeechService {
 
             // 음성 설정
             VoiceSelectionParams voice = VoiceSelectionParams.newBuilder()
-                    .setLanguageCode("en-US")
+                    .setLanguageCode("ko-KR")
                     .setSsmlGender(SsmlVoiceGender.NEUTRAL)
                     .build();
 

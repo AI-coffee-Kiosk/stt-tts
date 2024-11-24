@@ -1,18 +1,18 @@
 package com.example.demo.controller;
 
-import com.example.demo.service.TextToSpeechService;
+import com.example.mykiosk.util.tts_api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/tts")
-public class TextToSpeechController {
+@RequestMapping("/api/speech")
+public class StsController {
 
     @Autowired
-    private TextToSpeechService textToSpeechService;
+    private TtsApi tts;
 
-    @PostMapping
+    @PostMapping("/tts")
     public String convertTextToSpeech(@RequestParam String text) {
-        return textToSpeechService.synthesizeText(text);
+        return tts.synthesizeText(text);
     }
 }
