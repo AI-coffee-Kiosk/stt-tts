@@ -1,4 +1,4 @@
-package com.example.mykiosk.controller;
+package com.example.mykiosk;
 
 import com.google.cloud.speech.v1.*;
 import com.google.protobuf.ByteString;

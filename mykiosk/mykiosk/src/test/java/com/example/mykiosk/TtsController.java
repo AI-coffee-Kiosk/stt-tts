@@ -1,12 +1,12 @@
-package com.example.demo.controller;
+package com.example.mykiosk;
 
-import com.example.mykiosk.util.tts_api;
+import com.example.mykiosk.util.TtsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/speech")
-public class StsController {
+public class TtsController {
 
     @Autowired
     private TtsApi tts;
