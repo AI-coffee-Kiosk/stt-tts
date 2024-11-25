@@ -4,6 +4,7 @@ var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEv
 var diagnosticPara = document.querySelector('.output');
 const tts = new SpeechSynthesisUtterance();
 
+//tts
 function populateVoiceList() {
 	if (typeof speechSynthesis === 'undefined') {
 		return;
@@ -22,6 +23,7 @@ if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !=
 	speechSynthesis.onvoiceschanged = populateVoiceList;
 }
 
+/*
 function searchCoffee(text, coffee, data) {
 	if (text.includes(coffee)) {
 		var coffeeCount = 0;
@@ -78,7 +80,7 @@ function searchCoffee(text, coffee, data) {
 	}
 	return data;
 }
-
+*/
 function coffeeGetPrice(coffee) {
 	var price = 0;
 	switch (coffee.trim()) {
@@ -120,8 +122,9 @@ function coffeeGetPrice(coffee) {
 	return price;
 }
 
+
 $(document).ready(function () {
-	//음성인식
+	//stt
 	var recognition = new SpeechRecognition();
 	var speechRecognitionList = new SpeechGrammarList();
 	recognition.grammars = speechRecognitionList;
@@ -172,6 +175,20 @@ $(document).ready(function () {
 			console.log("Server Response:", resp);
 			offset = userText.offset();
 			userText.scrollTop(userText[0].scrollHeight);
+
+			//json 처리
+			const coffee = resp.current_orders;
+			let price = 0;
+			let quantity = 0;
+			coffee.drinks.forEach((drink) => {
+				price += coffeeGetPrice(drink.name) * drink.quantity;
+				quantity += drink.quantity;
+			})
+			document.getElementById('totalPrice').textContent = price.toLocaleString('ko-KR');
+			document.getElementById('totalQuantity').textContent = quantity;
+			console.log(price);
+			console.log(quantity);
+
 
 			// if (text.includes("주문하신") || text.includes("수정")) {
 			// 	$('.orderListBox').empty();

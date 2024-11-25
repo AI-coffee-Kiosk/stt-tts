@@ -5,6 +5,8 @@ import java.net.URL;
 import java.io.OutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 // 사용법
 /*
@@ -25,7 +27,7 @@ public class TestApiClient {
 }
  */
 public class LlamaApiClient {
-    public static String sendToPythonApi(String inputText, String llama_url) throws Exception {
+    public static Map<String, String> sendToPythonApi(String inputText, String llama_url) throws Exception {
         // API URL 설정
         //URL url = new URL("http://localhost:8000/order_input/");
         URL url = new URL(llama_url);
@@ -49,7 +51,8 @@ public class LlamaApiClient {
             while ((responseLine = br.readLine()) != null) {
                 response.append(responseLine.trim());
             }
-            return response.toString();
+            Map<String, String> r = new HashMap<>();
+            return r;
         }
 
 
@@ -59,8 +62,8 @@ public class LlamaApiClient {
         try {
             // 테스트로 보낼 텍스트
             String inputText = "User STT input";
-            String outputText = sendToPythonApi(inputText, "http://localhost:8000/order_input/"); // 메서드 호출
-            System.out.println("Answer : " + outputText);
+            //String outputText = sendToPythonApi(inputText, "http://localhost:8000/order_input/"); // 메서드 호출
+            //System.out.println("Answer : " + outputText);
         } catch (Exception e) {
             e.printStackTrace();
         }
