@@ -12,9 +12,9 @@ import java.util.Map;
 public class ConnectController {
     @PostMapping("/chat")
     public String chat(@RequestBody Map<String, String> message) {
-
-        System.out.println(message.get("message"));
-        return "";
+        // llama api post(message.get("message"))
+        // llama api get and 데이터 수정
+        return "";//llama response return
     }
 
 }
