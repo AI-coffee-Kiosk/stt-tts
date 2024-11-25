@@ -121,6 +121,7 @@ function coffeeGetPrice(coffee) {
 }
 
 $(document).ready(function () {
+	//음성인식
 	var recognition = new SpeechRecognition();
 	var speechRecognitionList = new SpeechGrammarList();
 	recognition.grammars = speechRecognitionList;
@@ -131,6 +132,7 @@ $(document).ready(function () {
 
 	recognition.start();
 
+	//음성 결과 분석
 	recognition.onresult = function (event) {
 		var speechResult = event.results[0][0].transcript.toLowerCase();
 		console.log('Confidence: ' + event.results[0][0].confidence);
@@ -143,6 +145,7 @@ $(document).ready(function () {
 			return;
 		}
 
+		//UI에 표시
 		var content =
 			`<div class="talk">
                 <div class="people_talk">
@@ -155,6 +158,7 @@ $(document).ready(function () {
 		var offset = userText.offset();
 		userText.scrollTop(userText[0].scrollHeight);
 
+		//서버에 전달
 		var aoo = ajax_object_options('POST', '/api/chatBot/chat', { message: speechResult });
 		ajax(aoo, function (resp) {
 			var text =
@@ -165,63 +169,63 @@ $(document).ready(function () {
                     </div>
                 </div>`;
 			userText.append(text);
-
-			offset = userText.offset();
-			userText.scrollTop(userText[0].scrollHeight);
-
-			if (text.includes("주문하신") || text.includes("수정")) {
-				$('.orderListBox').empty();
-				var data = { content: '', coffeeKind: 0, coffeeCount: 0, price: 0 };
-
-				var menu = [
-					"에스프레소", "아메리카노", "카푸치노", "카페라떼", "바닐라라떼", "카라멜마끼야또",
-					"카페모카", "아포카토", "토마토주스", "키위주스", "망고스무디", "딸기스무디",
-					"쿠키앤크림", "레몬에이드", "복숭아아이스티", "허브티", "말차라떼", "초콜릿라떼"
-				];
-
-				for (var i = 0; i < menu.length; i++) {
-					data = searchCoffee(text, menu[i], data);
-				}
-
-				if (text.includes('결제')) {
-					setTimeout(() => {
-						$('.contents').css('display', 'none');
-						$('.payment').css('display', 'flex');
-						setTimeout(() => {
-							$('.payment').css('display', 'none');
-							$('.paymentEnd').css('display', 'flex');
-							setTimeout(() => {
-								$('.paymentEnd').css('display', 'none');
-								$('.contents').css('display', 'flex');
-								$('.orderListBox').empty();
-								$('#coffeeCount').text(0);
-								$('#coffeePrice').text(0);
-								userText.html('');
-							}, 15000);
-
-							window.speechSynthesis.cancel();
-							diagnosticPara.html('안녕하세요. 서비스 지원을 위한 제니입니다.<br>원하시는 서비스를 말씀해 주세요.');
-							tts.lang = 'ko-KR';
-							tts.pitch = 1;
-							tts.rate = 1;
-							tts.text = '주문이 성공적으로 진행되었습니다. 카드를 회수해 주세요. 저희 매장을 이용해 주셔서 감사합니다. 주문번호를 확인 하신 후 안내된 번호에 맞춰 카운터로 오시면 됩니다.';
-							tts.volume = 1;
-							window.speechSynthesis.speak(tts);
-						}, 7000);
-					}, 1000);
-				}
-
-				if (text.includes('취소')) {
-					$('.orderListBox').empty();
-					$('#coffeeCount').text(0);
-					$('#coffeePrice').text(0);
-					userText.html('');
-				}
-
-				$('.orderListBox').html(data.content);
-				$('#coffeeCount').text(data.coffeeCount);
-				$('#coffeePrice').text(data.price.toLocaleString('ko-KR'));
-			}
+			console.log("Server Response:", resp);
+			// offset = userText.offset();
+			// userText.scrollTop(userText[0].scrollHeight);
+			//
+			// if (text.includes("주문하신") || text.includes("수정")) {
+			// 	$('.orderListBox').empty();
+			// 	var data = { content: '', coffeeKind: 0, coffeeCount: 0, price: 0 };
+			//
+			// 	var menu = [
+			// 		"에스프레소", "아메리카노", "카푸치노", "카페라떼", "바닐라라떼", "카라멜마끼야또",
+			// 		"카페모카", "아포카토", "토마토주스", "키위주스", "망고스무디", "딸기스무디",
+			// 		"쿠키앤크림", "레몬에이드", "복숭아아이스티", "허브티", "말차라떼", "초콜릿라떼"
+			// 	];
+			//
+			// 	for (var i = 0; i < menu.length; i++) {
+			// 		data = searchCoffee(text, menu[i], data);
+			// 	}
+			//
+			// 	if (text.includes('결제')) {
+			// 		setTimeout(() => {
+			// 			$('.contents').css('display', 'none');
+			// 			$('.payment').css('display', 'flex');
+			// 			setTimeout(() => {
+			// 				$('.payment').css('display', 'none');
+			// 				$('.paymentEnd').css('display', 'flex');
+			// 				setTimeout(() => {
+			// 					$('.paymentEnd').css('display', 'none');
+			// 					$('.contents').css('display', 'flex');
+			// 					$('.orderListBox').empty();
+			// 					$('#coffeeCount').text(0);
+			// 					$('#coffeePrice').text(0);
+			// 					userText.html('');
+			// 				}, 15000);
+			//
+			// 				window.speechSynthesis.cancel();
+			// 				diagnosticPara.html('안녕하세요. 서비스 지원을 위한 제니입니다.<br>원하시는 서비스를 말씀해 주세요.');
+			// 				tts.lang = 'ko-KR';
+			// 				tts.pitch = 1;
+			// 				tts.rate = 1;
+			// 				tts.text = '주문이 성공적으로 진행되었습니다. 카드를 회수해 주세요. 저희 매장을 이용해 주셔서 감사합니다. 주문번호를 확인 하신 후 안내된 번호에 맞춰 카운터로 오시면 됩니다.';
+			// 				tts.volume = 1;
+			// 				window.speechSynthesis.speak(tts);
+			// 			}, 7000);
+			// 		}, 1000);
+			// 	}
+			//
+			// 	if (text.includes('취소')) {
+			// 		$('.orderListBox').empty();
+			// 		$('#coffeeCount').text(0);
+			// 		$('#coffeePrice').text(0);
+			// 		userText.html('');
+			// 	}
+			//
+			// 	$('.orderListBox').html(data.content);
+			// 	$('#coffeeCount').text(data.coffeeCount);
+			// 	$('#coffeePrice').text(data.price.toLocaleString('ko-KR'));
+			// }
 
 			tts.lang = 'ko-KR';
 			tts.pitch = 1;

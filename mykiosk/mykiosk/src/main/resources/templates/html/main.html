@@ -6,6 +6,9 @@
   <title>DREAM COFFEE</title>
   <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" href="/css/main.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/ajax.js"></script>
+  <script src = "/js/coffee.js"></script>
 </head>
 <body>
   <!-- main 첫 페이지 -->
@@ -60,7 +63,16 @@
 
       <!-- 주문&메뉴 영역 -->
       <article class="order_menu">
-
+        <div class="menu_order">
+          <!-- 음성 인식 결과와 서버 응답 내용 -->
+        </div>
+        <div class="orderListBox">
+          <!-- 주문된 음료 목록 -->
+        </div>
+        <div class="order_summary">
+          <p>총 주문 수량: <span id="coffeeCount">0</span> 잔</p>
+          <p>총 금액: ₩ <span id="coffeePrice">0</span></p>
+        </div>
       </article>
 
       <!-- 하단 영역 -->
@@ -88,7 +100,5 @@
         </div>
       </article>
    </main>
-
-  <script src = "/js/coffee.js"></script>
 </body>
 </html>
