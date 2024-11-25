@@ -11,7 +11,7 @@ function populateVoiceList() {
 
 	const voices = speechSynthesis.getVoices();
 	const voiceList = voices
-		.filter((voice) => voice.lang.includes('en'))
+		.filter((voice) => voice.lang.includes('ko'))
 		.map((voice) => `${voice.name} (${voice.lang})`);
 	console.log(voices);
 }
@@ -170,9 +170,9 @@ $(document).ready(function () {
                 </div>`;
 			userText.append(text);
 			console.log("Server Response:", resp);
-			// offset = userText.offset();
-			// userText.scrollTop(userText[0].scrollHeight);
-			//
+			offset = userText.offset();
+			userText.scrollTop(userText[0].scrollHeight);
+
 			// if (text.includes("주문하신") || text.includes("수정")) {
 			// 	$('.orderListBox').empty();
 			// 	var data = { content: '', coffeeKind: 0, coffeeCount: 0, price: 0 };

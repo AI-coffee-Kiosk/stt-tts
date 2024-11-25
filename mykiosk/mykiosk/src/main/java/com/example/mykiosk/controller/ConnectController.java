@@ -1,5 +1,6 @@
 package com.example.mykiosk.controller;
 
+import com.example.mykiosk.api.LlamaApiClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,12 +15,21 @@ import java.util.Map;
 public class ConnectController {
     @PostMapping("/chat")
     public ResponseEntity<Map<String, String>> chat(@RequestBody Map<String, String> message) {
-        // llama api post(message.get("message"))
-        // llama api get and 데이터 수정
         Map<String, String> response = new HashMap<>();
+        String llamaUrl = "http://localhost:8000/order_input/";
         String userMessage = message.get("message");
-        response.put("text", userMessage);
-        return ResponseEntity.ok(response);//llama response return
-    }
 
+        /*try {
+            // Llama API 호출
+            String llamaMessage = LlamaApiClient.sendToPythonApi(userMessage, llamaUrl);
+            response.put("text", llamaMessage);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // 예외 처리
+            response.put("error", "Failed to process the request: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }*/
+        response.put("text", message.get("message"));//들어온 input 그대로 출력
+        return ResponseEntity.ok(response);
+    }
 }

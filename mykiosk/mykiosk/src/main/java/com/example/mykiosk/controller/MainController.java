@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
 
     @GetMapping({ "", "/" })
-    public String Main(Model model) {
-
+    public String index(Model model) {
         return "html/index";
     }
 
@@ -18,8 +17,8 @@ public class MainController {
         return "html/main";
     }
 
-    @GetMapping("example")
-    public String example(Model model) {
-        return "html/shop_out_up";
+    @GetMapping("order")
+    public String order(Model model) {
+        return "html/order_1";
     }
 }
