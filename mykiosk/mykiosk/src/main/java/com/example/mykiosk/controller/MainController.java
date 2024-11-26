@@ -38,4 +38,12 @@ public class MainController {
         return "html/shop_out_up";
     }
 
+    @GetMapping("order")
+    public String order(Model model) {
+        return "html/order_1";
+    }
+    @GetMapping("orderall")
+    public String orderall(Model model) {
+        return "html/order_2";
+    }
 }
