@@ -176,6 +176,11 @@ function getImage(menuName){
 	}
 }
 
+function getSize(size){
+	if(size === "라지") return 'L';
+	else if(size === "엑스트라 라지") return 'XL';
+	else return 'M'
+}
 
 $(document).ready(function () {
 	//stt
@@ -218,6 +223,12 @@ $(document).ready(function () {
 		//서버에 전달
 		var aoo = ajax_object_options('POST', '/api/chatBot/chat', { message: speechResult });
 		ajax(aoo, function (resp) {
+			if(resp.action === "complete"){
+				setTimeout(function () {
+					window.location.href = '/pay'; // 이동할 페이지 경로
+				}, 3000);
+			}
+			//text 처리
 			var text =
 				`<div class="talk">
                     <div class="ask_talk">
@@ -239,8 +250,15 @@ $(document).ready(function () {
 			coffee.drinks.forEach((drink) => {
 				const imagePath = getImage(drink.name)
 				const addOns = drink.add_ons !== "None" ? drink.add_ons.replace(/[()]/g, "").split(",") : [];
-
-				const optionsHtml = addOns.map(option => `
+				const size = getSize(drink.size);
+				const optionsHtml = `
+						<div class="option_box">
+							<div>
+								<span class="option">사이즈: ${size}</span>
+							</div>
+						</div>
+					`
+					+ addOns.map(option => `
 					<div class="option_box">
 						<div>
 							<span class="option">${option}</span>

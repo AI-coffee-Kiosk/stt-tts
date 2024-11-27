@@ -7,15 +7,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Controller
-@RequestMapping("/")
-public class MainController {
+@RequestMapping("/pay")
+public class PaymentController {
     @GetMapping("")
-    public String index(Model model) {
-        return "html/index";
+    public String pay(Model model) {
+        return "html/pay_info";
     }
 
-    @GetMapping("main")
-    public String main(Model model) {
-        return "html/main";
+    @GetMapping("/receipt")
+    public String receipt(Model model) {
+        return "html/receipt_up";
+    }
+
+    @GetMapping("/togo")
+    public String togo(Model model) {
+        return "html/shop_out_up";
     }
 }
