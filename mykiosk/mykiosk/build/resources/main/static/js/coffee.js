@@ -119,15 +119,61 @@ function coffeeGetPrice(coffee, shot, size) {
 		default:
 			break;
 	}
-	if(shot != 'None'){
+	if(shot !== 'None'){
 		shotnum = parseInt(shot[shot.length - 2], 10);
 		price += 500*shotnum;
 	}
-	if(size == "라지"){
+	if(size === "라지"){
 		price += 1000;
+	}
+	else if(size === "엑스트라 라지"){
+		price += 2000;
 	}
 
 	return price;
+}
+
+function getImage(menuName){
+	switch(menuName){
+		case "에스프레소":
+			return '/img/Espresso.png'
+		case "아메리카노":
+			return '/img/Americano.png'
+		case "카푸치노":
+			return '/img/Cappuccino.png'
+		case "카페라떼":
+			return '/img/CaffeLatte.png'
+		case "바닐라라떼":
+			return '/img/VanillaLatte.png'
+		case "카라멜마끼야또":
+			return '/img/CaramelMacchiato.png'
+		case "카페모카":
+			return '/img/CaffeMocha.png'
+		case "아포카토":
+			return '/img/Affokato.png'
+		case "복숭아아이스티":
+			return '/img/IcedTea.png'
+		case "허브티":
+			return '/img/HerbalTea.png'
+		case "토마토주스":
+			return '/img/Tomato.png'
+		case "키위주스":
+			return '/img/Kiwi.png'
+		case "레몬에이드":
+			return '/img/Lemon.png'
+		case "망고스무디":
+			return '/img/Mango.png'
+		case "딸기스무디":
+			return '/img/Strawberry.png'
+		case "쿠키앤크림":
+			return '/img/Cookies.png'
+		case "말차라떼":
+			return '/img/Matcha.png'
+		case "초콜릿라떼":
+			return '/img/Chocolate.png'
+		default:
+			return '/img/menu_1.png'
+	}
 }
 
 
@@ -188,12 +234,74 @@ $(document).ready(function () {
 			const coffee = resp.current_orders;
 			let price = 0;
 			let quantity = 0;
+			const menuList = $('#menuList');
+			menuList.empty();
 			coffee.drinks.forEach((drink) => {
+				const imagePath = getImage(drink.name)
+				const addOns = drink.add_ons !== "None" ? drink.add_ons.replace(/[()]/g, "").split(",") : [];
+
+				const optionsHtml = addOns.map(option => `
+					<div class="option_box">
+						<div>
+							<span class="option">${option}</span>
+						</div>
+						<div>
+							+ <span class="option_money">500</span> <!-- 샘플 가격 -->
+						</div>
+					</div>
+				`).join('');
+
+				// 메뉴 HTML
+				const menuHtml = `
+				<li>
+					<div class="menu_img">
+						<div class="${drink.temperature === '핫' ? 'temp_hot' : 'temp_ice'}">
+							<span class="temp">${drink.temperature === '핫' ? 'HOT' : 'ICE'}</span>
+						</div>
+						<img src="${getImage(drink.name)}" alt="${drink.name}">
+					</div>
+					<div class="menu_txt">
+						<!-- 메뉴 & 가격 영역 -->
+						<div>
+							<div>
+								<span class="menu">${drink.name}</span>
+							</div>
+							<div>
+								₩<span class="money"> ${coffeeGetPrice(drink.name, drink.add_ons, drink.size).toLocaleString()}</span>
+							</div>
+						</div>
+	
+						<!-- 옵션 영역 -->
+						<div>${optionsHtml}</div>
+	
+						<!-- 버튼 영역 -->
+						<div>
+							<div class="button_del">
+								<img src="/img/icon_delete.png" alt="삭제 버튼">
+							</div>
+							<div class="button_num">
+								<button>
+									<span>-</span>
+								</button>
+								<div>
+									<span>${drink.quantity}</span>
+								</div>
+								<button>
+									<span>+</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</li>`;
+				//가격 및 수량
 				price += coffeeGetPrice(drink.name, drink.add_ons, drink.size) * drink.quantity;
 				quantity += drink.quantity;
+				menuList.append(menuHtml);
 			})
+
 			document.getElementById('totalPrice').textContent = price.toLocaleString('ko-KR');
 			document.getElementById('totalQuantity').textContent = quantity;
+
 
 
 			// if (text.includes("주문하신") || text.includes("수정")) {

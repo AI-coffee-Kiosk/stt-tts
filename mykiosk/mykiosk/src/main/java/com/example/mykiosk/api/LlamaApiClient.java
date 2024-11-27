@@ -27,7 +27,7 @@ public class TestApiClient {
 }
  */
 public class LlamaApiClient {
-    public static Map<String, String> sendToPythonApi(String inputText, String llama_url) throws Exception {
+    public static String sendToPythonApi(String inputText, String llama_url) throws Exception {
         // API URL 설정
         //URL url = new URL("http://localhost:8000/order_input/");
         URL url = new URL(llama_url);
@@ -51,8 +51,7 @@ public class LlamaApiClient {
             while ((responseLine = br.readLine()) != null) {
                 response.append(responseLine.trim());
             }
-            Map<String, String> r = new HashMap<>();
-            return r;
+            return response.toString();
         }
 
 
