@@ -81,7 +81,7 @@ function searchCoffee(text, coffee, data) {
 	return data;
 }
 */
-function coffeeGetPrice(coffee) {
+function coffeeGetPrice(coffee, shot, size) {
 	var price = 0;
 	switch (coffee.trim()) {
 		case "에스프레소":
@@ -119,6 +119,14 @@ function coffeeGetPrice(coffee) {
 		default:
 			break;
 	}
+	if(shot != 'None'){
+		shotnum = parseInt(shot[shot.length - 2], 10);
+		price += 500*shotnum;
+	}
+	if(size == "라지"){
+		price += 1000;
+	}
+
 	return price;
 }
 
@@ -181,13 +189,11 @@ $(document).ready(function () {
 			let price = 0;
 			let quantity = 0;
 			coffee.drinks.forEach((drink) => {
-				price += coffeeGetPrice(drink.name) * drink.quantity;
+				price += coffeeGetPrice(drink.name, drink.add_ons, drink.size) * drink.quantity;
 				quantity += drink.quantity;
 			})
 			document.getElementById('totalPrice').textContent = price.toLocaleString('ko-KR');
 			document.getElementById('totalQuantity').textContent = quantity;
-			console.log(price);
-			console.log(quantity);
 
 
 			// if (text.includes("주문하신") || text.includes("수정")) {
