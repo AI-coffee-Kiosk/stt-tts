@@ -120,7 +120,6 @@ function coffeeGetPrice(coffee, shot, size) {
 			break;
 	}
 	if(shot != 'None'){
-		console.log('shot-2' + shot[shot.length - 2])
 		shotnum = parseInt(shot[shot.length - 2], 10);
 		price += 500*shotnum;
 	}
