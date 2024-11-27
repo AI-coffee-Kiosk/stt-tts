@@ -7,7 +7,7 @@
 /* 주문 채팅 영역 */
 .menu_order {
   width: 100%;
-  height: 20%;
+  height: 100%;
   background-color: #E4E4E4;
   padding-top: 20px;
   overflow-y: auto;
