@@ -45,5 +45,14 @@
       </article>
 
    </main>
+<script>
+  document.addEventListener("keydown", function(event) {
+    // Enter 키 또는 스페이스바를 눌렀을 때 실행
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault(); // 기본 동작 방지 (예: 스크롤 이동)
+      window.location.href = "/"; // 이동할 HTML 페이지 경로
+    }
+  });
+</script>
 </body>
 </html>
