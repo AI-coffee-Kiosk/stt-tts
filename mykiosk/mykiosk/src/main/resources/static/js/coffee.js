@@ -223,10 +223,16 @@ $(document).ready(function () {
 		//서버에 전달
 		var aoo = ajax_object_options('POST', '/api/chatBot/chat', { message: speechResult });
 		ajax(aoo, function (resp) {
-			if(resp.action === "complete"){
+			if(resp.action && resp.action.trim().toLowerCase() === "complete"){
 				setTimeout(function () {
+					console.log("complete action detected. Page will change in 10 seconds.");
 					window.location.href = '/pay'; // 이동할 페이지 경로
-				}, 3000);
+				}, 10000);
+			}else if(resp.action && resp.action.trim().toLowerCase() === "cancel"){
+				console.log("Cancel action detected. Page will reload in 10 seconds.");
+				setTimeout(function () {
+					location.reload()
+				}, 10000);
 			}
 			//text 처리
 			var text =
@@ -237,7 +243,6 @@ $(document).ready(function () {
                     </div>
                 </div>`;
 			userText.append(text);
-			console.log("Server Response:", resp);
 			offset = userText.offset();
 			userText.scrollTop(userText[0].scrollHeight);
 

@@ -18,4 +18,8 @@ public class OrderController {
     public String orderAll(Model model) {
         return "html/order_2";
     }
+    @GetMapping("/clear")
+    public String clear(Model model) {
+        return "html/order_clear";
+    }
 }
