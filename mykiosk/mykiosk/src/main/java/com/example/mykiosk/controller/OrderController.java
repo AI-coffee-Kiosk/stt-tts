@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Controller
-@RequestMapping("/")
-public class MainController {
-    @GetMapping("")
-    public String index(Model model) {
-        return "html/index";
+@RequestMapping("/order")
+public class OrderController {
+    @GetMapping("1")
+    public String order(Model model) {
+        return "html/order_1";
     }
 
-    @GetMapping("main")
-    public String main(Model model) {
-        return "html/main";
+    @GetMapping("/all")
+    public String orderAll(Model model) {
+        return "html/order_2";
     }
 }
