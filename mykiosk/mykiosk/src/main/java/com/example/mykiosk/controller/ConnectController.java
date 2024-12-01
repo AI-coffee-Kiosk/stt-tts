@@ -23,7 +23,8 @@ public class ConnectController {
         ObjectMapper mapper = new ObjectMapper();
         String llamaUrl = "https://92ba-34-143-134-120.ngrok-free.app/process_text/";
         String userMessage = message.get("message");
-        String response = "{\"action\" : \"complete\", \"text\": \"아메리카노가 추가되었습니다.\\n현재 주문하신 내용은 다음과 같습니다:\\n아이스 아메리카노 라지 2잔\", \"current_orders\": {\"drinks\": [{\"index\": 0, \"name\": \"아메리카노\", \"size\": \"라지\", \"temperature\": \"아이스\", \"add_ons\": \"None\", \"quantity\": 2, \"quantity_indexes\": [\"0-0\", \"0-1\"]}]}}";
+        String response = "{\"action\" : \"complete\", \"text\": \"아메리카노가 추가되었습니다.\\n현재 주문하신 내용은 다음과 같습니다:\\n아이스 아메리카노 라지 2잔\", " +
+                "\"current_orders\": {\"drinks\": [{\"index\": 0, \"name\": \"아메리카노\", \"size\": \"라지\", \"temperature\": \"아이스\", \"add_ons\": \"(샷 추가: 1)\", \"quantity\": 2, \"quantity_indexes\": [\"0-0\", \"0-1\"]}]}}";
 
 
         Map<String, Object> info = mapper.readValue(response, Map.class);
