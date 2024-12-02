@@ -17,18 +17,18 @@ public class ConnectController {
     @PostMapping("/chat")
     public ResponseEntity<Map<String, Object>> chat(@RequestBody Map<String, String> message) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        String llamaUrl = "https://acd3-35-232-80-109.ngrok-free.app/process_text/";
+        String llamaUrl = "https://eab0-34-74-54-227.ngrok-free.app/process_text/";
         String userMessage = message.get("message");
 
-        /*String response = "{\"action\" : \"None\", \"text\": \"아메리카노가 추가되었습니다.\\n현재 주문하신 내용은 다음과 같습니다:\\n아이스 아메리카노 라지 2잔\", " +
-                "\"current_orders\": {\"drinks\": [{\"index\": 0, \"name\": \"딸기스무디\", \"size\": \"라지\", \"temperature\": \"아이스\", \"add_ons\": \"(샷 추가: 1)\", \"quantity\": 2, \"quantity_indexes\": [\"0-0\", \"0-1\"]}]}}";
+        String response = "{\"action\" : \"주문 종료\", \"text\": \"아메리카노가 추가되었습니다.\\n현재 주문하신 내용은 다음과 같습니다:\\n아이스 아메리카노 라지 2잔\", " +
+                "\"current_orders\": {\"drinks\": [{\"index\": 0, \"name\": \"카푸치노\", \"size\": \"라지\", \"temperature\": \"아이스\", \"add_ons\": \"(샷 추가: 1)\", \"quantity\": 2, \"quantity_indexes\": [\"0-0\", \"0-1\"]}]}}";
 
 
         Map<String, Object> info = mapper.readValue(response, Map.class);
         System.out.println(info);
-        return ResponseEntity.ok(info);*/
+        return ResponseEntity.ok(info);
 
-        try {
+        /*try {
             String llamaResponse = LlamaApiClient.sendToPythonApi(userMessage, llamaUrl);
             Map<String, Object> info = mapper.readValue(llamaResponse, Map.class);
             System.out.println("Llama API Response: " + info);
@@ -40,6 +40,6 @@ public class ConnectController {
         } catch (Exception e) {
             System.err.println("Error calling Llama API: " + e.getMessage());
             return ResponseEntity.status(500).body(Map.of("error", "Error communicating with Llama API"));
-        }
+        }*/
     }
 }

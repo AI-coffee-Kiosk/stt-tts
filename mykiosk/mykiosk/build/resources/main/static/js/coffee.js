@@ -121,11 +121,12 @@ function getImage(menuName){
 
 function getSize(size){
 	if(size === "라지") return 'L';
-	else if(size === "엑스트라 라지") return 'XL';
+	else if(size === "엑스라지") return 'XL';
 	else return 'M'
 }
 
 $(document).ready(function () {
+	let recStart = false;
 	//stt
 	var recognition = new SpeechRecognition();
 	var speechRecognitionList = new SpeechGrammarList();
@@ -166,14 +167,14 @@ $(document).ready(function () {
 		var aoo = ajax_object_options('POST', '/api/chatBot/chat', { message: speechResult });
 		ajax(aoo, function (resp) {
 			if(resp.action && resp.action.trim().toLowerCase() === "주문 완료"){
+				console.log("complete action detected. Page will change in 10 seconds.");
 				setTimeout(function () {
-					console.log("complete action detected. Page will change in 10 seconds.");
 					window.location.href = '/pay'; // 이동할 페이지 경로
 				}, 10000);
 			}else if(resp.action && resp.action.trim().toLowerCase() === "주문 종료"){
 				console.log("Cancel action detected. Page will reload in 10 seconds.");
 				setTimeout(function () {
-					location.reload()
+					window.location.href = '/';
 				}, 10000);
 			}
 			//text 처리
@@ -276,6 +277,12 @@ $(document).ready(function () {
 			tts.text = resp.text;
 			tts.volume = 1;
 			window.speechSynthesis.speak(tts);
+			console.log("stt wait for 10 sec");
+			setTimeout(() => {
+
+				recStart = true;
+			}, 10000);
+
 
 		}, function (resp) {
 			alert('에러 발생');
@@ -293,6 +300,15 @@ $(document).ready(function () {
 
 	recognition.onend = function () {
 		console.log('SpeechRecognition.onend');
+		const intervalId = setInterval(() => {
+			if (recStart) {
+				console.log("stt start");
+				clearInterval(intervalId); // 감시 중단
+				recognition.start();
+				recStart = false;
+			}
+		}, 1000);
+
 	};
 
 	recognition.onnomatch = function () {
