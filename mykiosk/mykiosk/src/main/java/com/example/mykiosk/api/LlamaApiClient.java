@@ -50,21 +50,28 @@ public class LlamaApiClient {
             while ((responseLine = br.readLine()) != null) {
                 response.append(responseLine.trim());
             }
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> info = mapper.readValue(response.toString(), Map.class);
+            for (Map.Entry<String, Object> entry : info.entrySet()) {
+                System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue() + "Value Type: " + entry.getValue().getClass().getName());
+            }
 
-            // JSON 문자열을 Map<String, Object>로 변환
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(response.toString(), new TypeReference<Map<String, Object>>() {});
+            for (Map.Entry<String, Object> entry : info.entrySet()) {
+
+                // current_item이 JSON 문자열인 경우 파싱
+                if (entry.getKey().equals("current_orders")) {
+                    String jsonString = (String) entry.getValue();
+                    Map<String, Object> parsedJson = mapper.readValue(jsonString, Map.class);
+                    entry.setValue(parsedJson); // JSON 문자열을 Map으로 변환하여 다시 저장
+                }
+                System.out.println("Key: " + entry.getKey());
+                System.out.println("Value: " + entry.getValue());
+                System.out.println("Value Type: " + entry.getValue().getClass().getName());
+            }
+
+
+            return info;
+
 
         }
-    }
-    public static void main(String[] args) {
-        try {
-            // 테스트로 보낼 텍스트
-            String inputText = "User STT input";
-            //String outputText = sendToPythonApi(inputText, "http://localhost:8000/order_input/"); // 메서드 호출
-            //System.out.println("Answer : " + outputText);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
