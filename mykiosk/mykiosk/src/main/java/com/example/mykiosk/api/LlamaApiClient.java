@@ -56,18 +56,40 @@ public class LlamaApiClient {
                 System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue() + "Value Type: " + entry.getValue().getClass().getName());
             }
 
-            for (Map.Entry<String, Object> entry : info.entrySet()) {
+            for (Map.Entry<String, Object> entry : entryMap.entrySet()) {
+            if (entry.getKey().equals("current_orders")) {
+                Object value = entry.getValue();
 
-                // current_item이 JSON 문자열인 경우 파싱
-                if (entry.getKey().equals("current_orders")) {
-                    String jsonString = (String) entry.getValue();
-                    Map<String, Object> parsedJson = mapper.readValue(jsonString, Map.class);
-                    entry.setValue(parsedJson); // JSON 문자열을 Map으로 변환하여 다시 저장
+                if (value instanceof String) {
+                    String jsonString = (String) value;
+
+                    // "None" 값을 빈 LinkedHashMap으로 변환
+                    if ("None".equalsIgnoreCase(jsonString)) {
+                        entry.setValue(new LinkedHashMap<>());
+                    } else {
+                        // JSON 문자열을 Map으로 변환
+                        Map<String, Object> parsedJson = mapper.readValue(jsonString, Map.class);
+                        entry.setValue(parsedJson);
+                    }
+                } else if (value == null) {
+                    // null 값을 빈 LinkedHashMap으로 설정
+                    entry.setValue(new LinkedHashMap<>());
                 }
-                System.out.println("Key: " + entry.getKey());
-                System.out.println("Value: " + entry.getValue());
-                System.out.println("Value Type: " + entry.getValue().getClass().getName());
             }
+        }
+
+            // for (Map.Entry<String, Object> entry : info.entrySet()) {
+
+            //     // current_item이 JSON 문자열인 경우 파싱
+            //     if (entry.getKey().equals("current_orders")) {
+            //         String jsonString = (String) entry.getValue();
+            //         Map<String, Object> parsedJson = mapper.readValue(jsonString, Map.class);
+            //         entry.setValue(parsedJson); // JSON 문자열을 Map으로 변환하여 다시 저장
+            //     }
+            //     System.out.println("Key: " + entry.getKey());
+            //     System.out.println("Value: " + entry.getValue());
+            //     System.out.println("Value Type: " + entry.getValue().getClass().getName());
+            // }
 
 
             return info;
