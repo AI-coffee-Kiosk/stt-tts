@@ -1,8 +1,6 @@
 package com.example.mykiosk.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import java.net.HttpURLConnection;
@@ -54,32 +52,32 @@ public class LlamaApiClient {
             }
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> info = mapper.readValue(response.toString(), Map.class);
-
-
-            for (Map.Entry<String, Object> entry : info.entrySet()) {
-                if (entry.getKey().equals("current_orders")) {
-                    Object value = entry.getValue();
-
-                    if (value instanceof String) {
-                        String jsonString = (String) value;
-
-                        // "None" 값을 빈 LinkedHashMap으로 변환
-                        if ("None".equalsIgnoreCase(jsonString)) {
-                            entry.setValue(new LinkedHashMap<>());
-                        } else {
-                            // JSON 문자열을 Map으로 변환
-                            Map<String, Object> parsedJson = mapper.readValue(jsonString, Map.class);
-                            entry.setValue(parsedJson);
-                        }
-                    } else if (value == null) {
-                        // null 값을 빈 LinkedHashMap으로 설정
-                        entry.setValue(new LinkedHashMap<>());
-                    }
-                }
-            }
             for (Map.Entry<String, Object> entry : info.entrySet()) {
                 System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue() + "Value Type: " + entry.getValue().getClass().getName());
             }
+
+            for (Map.Entry<String, Object> entry : entryMap.entrySet()) {
+            if (entry.getKey().equals("current_orders")) {
+                Object value = entry.getValue();
+
+                if (value instanceof String) {
+                    String jsonString = (String) value;
+
+                    // "None" 값을 빈 LinkedHashMap으로 변환
+                    if ("None".equalsIgnoreCase(jsonString)) {
+                        entry.setValue(new LinkedHashMap<>());
+                    } else {
+                        // JSON 문자열을 Map으로 변환
+                        Map<String, Object> parsedJson = mapper.readValue(jsonString, Map.class);
+                        entry.setValue(parsedJson);
+                    }
+                } else if (value == null) {
+                    // null 값을 빈 LinkedHashMap으로 설정
+                    entry.setValue(new LinkedHashMap<>());
+                }
+            }
+        }
+
             // for (Map.Entry<String, Object> entry : info.entrySet()) {
 
             //     // current_item이 JSON 문자열인 경우 파싱
