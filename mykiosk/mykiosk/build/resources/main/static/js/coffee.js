@@ -23,7 +23,7 @@ if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !=
 	speechSynthesis.onvoiceschanged = populateVoiceList;
 }
 
-function coffeeGetPrice(coffee, shot, size) {
+function coffeeGetPrice(coffee, options = {}, size) {
 	var price = 0;
 	switch (coffee.trim()) {
 		case "에스프레소":
@@ -62,14 +62,16 @@ function coffeeGetPrice(coffee, shot, size) {
 			break;
 	}
 	//휘핑크림 or 샷추가
-	if(shot !== 'None'){
-		shotnum = parseInt(shot[shot.length - 2], 10);
-		price += 500*shotnum;
+	if (options && typeof options === "object"){
+		Object.entries(options).forEach(([key, num]) => {
+			price += 500*num;
+		});
 	}
+
 	if(size === "라지"){
 		price += 1000;
 	}
-	else if(size === "엑스트라 라지"){
+	else if(size === "엑스라지"){
 		price += 2000;
 	}
 
@@ -126,7 +128,7 @@ function getSize(size){
 }
 
 $(document).ready(function () {
-	let recStart = false;
+	let wait = false
 	//stt
 	var recognition = new SpeechRecognition();
 	var speechRecognitionList = new SpeechGrammarList();
@@ -150,6 +152,8 @@ $(document).ready(function () {
 			return;
 		}
 
+		wait = true;
+
 		//UI에 표시
 		var content =
 			`<div class="talk">
@@ -166,6 +170,7 @@ $(document).ready(function () {
 		//서버에 전달
 		var aoo = ajax_object_options('POST', '/api/chatBot/chat', { message: speechResult });
 		ajax(aoo, function (resp) {
+
 			if(resp.action && resp.action.trim().toLowerCase() === "주문 완료"){
 				console.log("complete action detected. Page will change in 10 seconds.");
 				setTimeout(function () {
@@ -195,12 +200,10 @@ $(document).ready(function () {
 			let quantity = 0;
 			const menuList = $('#menuList');
 			menuList.empty();
-			console.log("coffee:", coffee)
-			console.log("drinks array:", coffee.drinks);
 			coffee.drinks.forEach((drink) => {
 				console.log(drink.name, drink.size, drink.add_ons);
 				const imagePath = getImage(drink.name)
-				const addOns = drink.add_ons !== "None" ? drink.add_ons.replace(/[()]/g, "").split(",") : [];
+				const addOns = drink.add_ons;
 				const size = getSize(drink.size);
 				const optionsHtml = `
 						<div class="option_box">
@@ -209,13 +212,13 @@ $(document).ready(function () {
 							</div>
 						</div>
 					`
-					+ addOns.map(option => `
+					+ Object.entries(addOns).map(([key, num]) => `
 					<div class="option_box">
 						<div>
-							<span class="option">${option}</span>
+							<span class="option">${key} : ${num}</span>
 						</div>
 						<div>
-							+ <span class="option_money">500</span> <!-- 샘플 가격 -->
+							+ <span class="option_money">${(num*500).toLocaleString('ko-KR')}</span> <!-- 샘플 가격 -->
 						</div>
 					</div>
 				`).join('');
@@ -236,7 +239,7 @@ $(document).ready(function () {
 								<span class="menu">${drink.name}</span>
 							</div>
 							<div>
-								₩<span class="money"> ${coffeeGetPrice(drink.name, drink.add_ons, drink.size).toLocaleString()}</span>
+								₩<span class="money"> ${coffeeGetPrice(drink.name, addOns, drink.size).toLocaleString()}</span>
 							</div>
 						</div>
 	
@@ -277,11 +280,7 @@ $(document).ready(function () {
 			tts.text = resp.text;
 			tts.volume = 1;
 			window.speechSynthesis.speak(tts);
-			console.log("stt wait for 10 sec");
-			setTimeout(() => {
-
-				recStart = true;
-			}, 10000);
+			recognition.stop();
 
 
 		}, function (resp) {
@@ -300,14 +299,10 @@ $(document).ready(function () {
 
 	recognition.onend = function () {
 		console.log('SpeechRecognition.onend');
-		const intervalId = setInterval(() => {
-			if (recStart) {
-				console.log("stt start");
-				clearInterval(intervalId); // 감시 중단
-				recognition.start();
-				recStart = false;
-			}
-		}, 1000);
+		if(!wait){
+			recognition.start();
+		}
+
 
 	};
 
@@ -329,5 +324,10 @@ $(document).ready(function () {
 
 	recognition.onstart = function () {
 		console.log('SpeechRecognition.onstart');
+	};
+	tts.onend = function () {
+		console.log("TTS finished. Restarting SpeechRecognition...");
+		wait = false
+		recognition.start();
 	};
 });

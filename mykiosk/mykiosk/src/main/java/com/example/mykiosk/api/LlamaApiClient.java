@@ -1,4 +1,4 @@
-package com.sample.www.controller.api;
+package com.example.mykiosk.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
@@ -74,4 +74,5 @@ public class LlamaApiClient {
 
 
         }
+    }
 }
