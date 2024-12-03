@@ -1,4 +1,7 @@
-package com.example.mykiosk.api;
+package com.sample.www.controller.api;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -25,9 +28,8 @@ public class TestApiClient {
 }
  */
 public class LlamaApiClient {
-    public static String sendToPythonApi(String inputText, String llama_url) throws Exception {
+    public static Map<String, Object> sendToPythonApi(String inputText, String llama_url) throws Exception {
         // API URL 설정
-        //URL url = new URL("http://localhost:8000/order_input/");
         URL url = new URL(llama_url);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
@@ -41,7 +43,6 @@ public class LlamaApiClient {
             os.write(input, 0, input.length);
         }
 
-
         // 응답 수신
         try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"))) {
             StringBuilder response = new StringBuilder();
@@ -49,12 +50,13 @@ public class LlamaApiClient {
             while ((responseLine = br.readLine()) != null) {
                 response.append(responseLine.trim());
             }
-            return response.toString();
+
+            // JSON 문자열을 Map<String, Object>로 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(response.toString(), new TypeReference<Map<String, Object>>() {});
+
         }
-
-
     }
-
     public static void main(String[] args) {
         try {
             // 테스트로 보낼 텍스트
