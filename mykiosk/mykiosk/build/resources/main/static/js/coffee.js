@@ -172,15 +172,15 @@ $(document).ready(function () {
 		ajax(aoo, function (resp) {
 
 			if(resp.action && resp.action.trim().toLowerCase() === "주문 완료"){
-				console.log("complete action detected. Page will change in 10 seconds.");
+				console.log("complete action detected. Page will change in 4.5 seconds.");
 				setTimeout(function () {
 					window.location.href = '/pay'; // 이동할 페이지 경로
-				}, 10000);
+				}, 4500);
 			}else if(resp.action && resp.action.trim().toLowerCase() === "주문 종료"){
-				console.log("Cancel action detected. Page will reload in 10 seconds.");
+				console.log("Cancel action detected. Page will reload in 4.5 seconds.");
 				setTimeout(function () {
 					window.location.href = '/';
-				}, 10000);
+				}, 4500);
 			}
 			//text 처리
 			var text =
@@ -200,31 +200,32 @@ $(document).ready(function () {
 			let quantity = 0;
 			const menuList = $('#menuList');
 			menuList.empty();
-			coffee.drinks.forEach((drink) => {
-				console.log(drink.name, drink.size, drink.add_ons);
-				const imagePath = getImage(drink.name)
-				const addOns = drink.add_ons;
-				const size = getSize(drink.size);
-				const optionsHtml = `
+			if(Object.keys(coffee).length !== 0) {
+				coffee.drinks.forEach((drink) => {
+					console.log(drink.name, drink.size, drink.add_ons);
+					const imagePath = getImage(drink.name)
+					const addOns = drink.add_ons;
+					const size = getSize(drink.size);
+					const optionsHtml = `
 						<div class="option_box">
 							<div>
 								<span class="option">사이즈: ${size}</span>
 							</div>
 						</div>
 					`
-					+ Object.entries(addOns).map(([key, num]) => `
+						+ Object.entries(addOns).map(([key, num]) => `
 					<div class="option_box">
 						<div>
 							<span class="option">${key} : ${num}</span>
 						</div>
 						<div>
-							+ <span class="option_money">${(num*500).toLocaleString('ko-KR')}</span> <!-- 샘플 가격 -->
+							+ <span class="option_money">${(num * 500).toLocaleString('ko-KR')}</span> <!-- 샘플 가격 -->
 						</div>
 					</div>
 				`).join('');
 
-				// 메뉴 HTML
-				const menuHtml = `
+					// 메뉴 HTML
+					const menuHtml = `
 				<li>
 					<div class="menu_img">
 						<div class="${drink.temperature === '핫' ? 'temp_hot' : 'temp_ice'}">
@@ -265,12 +266,12 @@ $(document).ready(function () {
 						</div>
 					</div>
 				</li>`;
-				//가격 및 수량
-				price += coffeeGetPrice(drink.name, drink.add_ons, drink.size) * drink.quantity;
-				quantity += drink.quantity;
-				menuList.append(menuHtml);
-			})
-
+					//가격 및 수량
+					price += coffeeGetPrice(drink.name, drink.add_ons, drink.size) * drink.quantity;
+					quantity += drink.quantity;
+					menuList.append(menuHtml);
+				})
+			}
 			document.getElementById('totalPrice').textContent = price.toLocaleString('ko-KR');
 			document.getElementById('totalQuantity').textContent = quantity;
 
@@ -281,7 +282,6 @@ $(document).ready(function () {
 			tts.volume = 1;
 			window.speechSynthesis.speak(tts);
 			recognition.stop();
-
 
 		}, function (resp) {
 			alert('에러 발생');

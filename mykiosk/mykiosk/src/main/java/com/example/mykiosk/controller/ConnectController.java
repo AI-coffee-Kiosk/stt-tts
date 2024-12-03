@@ -18,7 +18,7 @@ public class ConnectController {
     @PostMapping("/chat")
     public ResponseEntity<Map<String, Object>> chat(@RequestBody Map<String, String> message) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        String llamaUrl = "https://a569-34-136-176-188.ngrok-free.app/process_text/";
+        String llamaUrl = "https://bbc3-34-44-72-53.ngrok-free.app/process_text/";
         String userMessage = message.get("message");
 
 //        String response = "{\"action\" : \"주문 종료\", \"text\": \"아메리카노가 추가되었습니다.\\n현재 주문하신 내용은 다음과 같습니다:\\n아이스 아메리카노 라지 2잔\", " +
@@ -32,10 +32,7 @@ public class ConnectController {
         try {
             Map<String, Object> info = LlamaApiClient.sendToPythonApi(userMessage, llamaUrl);
             List<Map<String, Object>> drinksObj = (List<Map<String, Object>>) info.get("drinks");
-
             System.out.println("Llama API Response: " + info);
-//            System.out.println("index: " + drinksObj.get(1).get("index"));
-//            System.out.println("name?: " + drinksObj.getClass().getName());
 
             return ResponseEntity.ok(info);
 
