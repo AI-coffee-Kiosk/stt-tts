@@ -23,7 +23,7 @@ if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !=
 	speechSynthesis.onvoiceschanged = populateVoiceList;
 }
 
-function coffeeGetPrice(coffee, shot, size) {
+function coffeeGetPrice(coffee, options = {}, size) {
 	var price = 0;
 	switch (coffee.trim()) {
 		case "에스프레소":
@@ -62,14 +62,16 @@ function coffeeGetPrice(coffee, shot, size) {
 			break;
 	}
 	//휘핑크림 or 샷추가
-	if(shot !== 'None'){
-		shotnum = parseInt(shot[shot.length - 2], 10);
-		price += 500*shotnum;
+	if (options && typeof options === "object"){
+		Object.entries(options).forEach(([key, num]) => {
+			price += 500*num;
+		});
 	}
+
 	if(size === "라지"){
 		price += 1000;
 	}
-	else if(size === "엑스트라 라지"){
+	else if(size === "엑스라지"){
 		price += 2000;
 	}
 
@@ -85,7 +87,7 @@ function getImage(menuName){
 		case "카푸치노":
 			return '/img/Cappuccino.png'
 		case "카페라떼":
-			return '/img/CaffeLatte.png'
+			return '/img/CaffèLatte.png'
 		case "바닐라라떼":
 			return '/img/VanillaLatte.png'
 		case "카라멜마끼야또":
@@ -95,25 +97,25 @@ function getImage(menuName){
 		case "아포카토":
 			return '/img/Affokato.jpg'
 		case "복숭아아이스티":
-			return '/img/IcedTea.png'
+			return '/img/PeachIcedTea.png'
 		case "허브티":
 			return '/img/HerbalTea.png'
 		case "토마토주스":
-			return '/img/Tomato.png'
+			return '/img/TomatoJuice.png'
 		case "키위주스":
-			return '/img/Kiwi.png'
+			return '/img/KiwiJuice.png'
 		case "레몬에이드":
-			return '/img/Lemon.png'
+			return '/img/Lemonade.png'
 		case "망고스무디":
-			return '/img/Mango.png'
+			return '/img/MangoSmoothie.png'
 		case "딸기스무디":
-			return '/img/Strawberry.png'
+			return '/img/StrawberrySmoothie.png'
 		case "쿠키앤크림":
-			return '/img/Cookies.png'
+			return '/img/CookiesandCream.png'
 		case "말차라떼":
-			return '/img/Matcha.png'
+			return '/img/MatchaLatte.png'
 		case "초콜릿라떼":
-			return '/img/Chocolate.png'
+			return '/img/ChocolateLatte.png'
 		default:
 			return '/img/menu_1.png'
 	}
@@ -121,11 +123,12 @@ function getImage(menuName){
 
 function getSize(size){
 	if(size === "라지") return 'L';
-	else if(size === "엑스트라 라지") return 'XL';
+	else if(size === "엑스라지") return 'XL';
 	else return 'M'
 }
 
 $(document).ready(function () {
+	let wait = false
 	//stt
 	var recognition = new SpeechRecognition();
 	var speechRecognitionList = new SpeechGrammarList();
@@ -134,7 +137,6 @@ $(document).ready(function () {
 	recognition.interimResults = false;
 	recognition.continious = false;
 	recognition.maxAlternatives = 1;
-
 	recognition.start();
 
 	//음성 결과 분석
@@ -149,6 +151,8 @@ $(document).ready(function () {
 		if (speechResult == null || speechResult === "") {
 			return;
 		}
+
+		wait = true;
 
 		//UI에 표시
 		var content =
@@ -166,15 +170,16 @@ $(document).ready(function () {
 		//서버에 전달
 		var aoo = ajax_object_options('POST', '/api/chatBot/chat', { message: speechResult });
 		ajax(aoo, function (resp) {
-			if(resp.action && resp.action.trim().toLowerCase() === "complete"){
+
+			if(resp.action && resp.action.trim().toLowerCase() === "주문 완료"){
+				console.log("complete action detected. Page will change in 10 seconds.");
 				setTimeout(function () {
-					console.log("complete action detected. Page will change in 10 seconds.");
 					window.location.href = '/pay'; // 이동할 페이지 경로
 				}, 10000);
-			}else if(resp.action && resp.action.trim().toLowerCase() === "cancel"){
+			}else if(resp.action && resp.action.trim().toLowerCase() === "주문 종료"){
 				console.log("Cancel action detected. Page will reload in 10 seconds.");
 				setTimeout(function () {
-					location.reload()
+					window.location.href = '/';
 				}, 10000);
 			}
 			//text 처리
@@ -196,8 +201,9 @@ $(document).ready(function () {
 			const menuList = $('#menuList');
 			menuList.empty();
 			coffee.drinks.forEach((drink) => {
+				console.log(drink.name, drink.size, drink.add_ons);
 				const imagePath = getImage(drink.name)
-				const addOns = drink.add_ons !== "None" ? drink.add_ons.replace(/[()]/g, "").split(",") : [];
+				const addOns = drink.add_ons;
 				const size = getSize(drink.size);
 				const optionsHtml = `
 						<div class="option_box">
@@ -206,13 +212,13 @@ $(document).ready(function () {
 							</div>
 						</div>
 					`
-					+ addOns.map(option => `
+					+ Object.entries(addOns).map(([key, num]) => `
 					<div class="option_box">
 						<div>
-							<span class="option">${option}</span>
+							<span class="option">${key} : ${num}</span>
 						</div>
 						<div>
-							+ <span class="option_money">500</span> <!-- 샘플 가격 -->
+							+ <span class="option_money">${(num*500).toLocaleString('ko-KR')}</span> <!-- 샘플 가격 -->
 						</div>
 					</div>
 				`).join('');
@@ -233,7 +239,7 @@ $(document).ready(function () {
 								<span class="menu">${drink.name}</span>
 							</div>
 							<div>
-								₩<span class="money"> ${coffeeGetPrice(drink.name, drink.add_ons, drink.size).toLocaleString()}</span>
+								₩<span class="money"> ${coffeeGetPrice(drink.name, addOns, drink.size).toLocaleString()}</span>
 							</div>
 						</div>
 	
@@ -274,6 +280,9 @@ $(document).ready(function () {
 			tts.text = resp.text;
 			tts.volume = 1;
 			window.speechSynthesis.speak(tts);
+			recognition.stop();
+
+
 		}, function (resp) {
 			alert('에러 발생');
 			console.log(resp);
@@ -290,7 +299,11 @@ $(document).ready(function () {
 
 	recognition.onend = function () {
 		console.log('SpeechRecognition.onend');
-		recognition.start();
+		if(!wait){
+			recognition.start();
+		}
+
+
 	};
 
 	recognition.onnomatch = function () {
@@ -311,5 +324,10 @@ $(document).ready(function () {
 
 	recognition.onstart = function () {
 		console.log('SpeechRecognition.onstart');
+	};
+	tts.onend = function () {
+		console.log("TTS finished. Restarting SpeechRecognition...");
+		wait = false
+		recognition.start();
 	};
 });
